@@ -1,0 +1,4 @@
+These javascript libraries were created using Browserify on cryptocoinjs packages.
+
+Website: http://cryptocoinjs.com/
+GitHub: https://github.com/cryptocoinjs/

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Test Page</title>
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/cipher-core-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/aes-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/ripemd160-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/sha256-min.js"></script>
+
+	<script src="./js/cryptocoinjs/base58.js"></script>
+	<script src="./js/cryptocoinjs/utils.js"></script>
+	<script src="./js/cryptocoinjs/coinkey.js"></script>
+	<script src="./js/cryptocoinjs/secp256k1.js"></script>
+
+	<script src="./js/coinjs/encoders.js"></script>
+	<script src="./js/coinjs/hashing.js"></script>
+	<script src="./js/coinjs/primitives.js"></script>
+	<script src="./js/coinjs/tx_parse.js"></script>
+	<script src="./js/coinjs/tx_utils.js"></script>
+	<script src="./js/coinjs/key_utils.js"></script>
+</head>
+<body>
+<h1>Functionality Tests</h1>
+
+<p>Open console to see results.</p>
+
+<script>
+
+/****** TEST: GENERATE A NEW EC KEY PAIR ******/
+
+// generate a random private key
+var privKey = genNewPrivateKey();
+
+// create a CoinKey object using privKey
+var ck = new CoinKey(privKey, coin_versions);
+
+// convert the public key to an address
+var address = pubKeyToAddress(ck.publicKey.toString('hex'));
+console.log('New Address:', address);
+
+//can also get the public key like this
+//var pubKey = secp256k1.publicKeyCreate(privKey);
+//and to import a WIF private key
+//var ck = CoinKey.fromWif('cMtMeuQfsL13rbaUXwUok7DXJf3dNfhFXNHcxY9esVmwBngbnvoy');
+// and to get the WIF key use ck.privateWif
+
+/****** TEST: CREATE A NEW TXN AND SIGN IT ******/
+
+// create some output address hashes for our txn
+var output_add1 = hex.decode(addressToHash160('cCHgFDKpNFFN8cshnyA9DvL91hkMCTtjXM'));
+var output_add2 = hex.decode(addressToHash160('c7f3CGiqQyWnykeTpfMy2YK5E5LQnHhZFX'));
+
+// get the address hash for our input 
+var input_add = ck.publicHash.toString('hex');
+
+// create the new txn object
+var tx1 = new Transaction();
+
+// create an input for the txn
+tx1.inputs.push({
+    pubkey: hex.decode(input_add),
+	value: 4000001002,
+    scriptSig: []
+});
+
+// the Cryptonite hack used two large outputs 
+// like this to exploit an overflow bug 
+tx1.outputs.push({
+    value: 49000000000000000,
+	pubkey: output_add1
+});
+
+tx1.outputs.push({
+    value: 18406744063709551615,
+	pubkey: output_add2
+});
+
+tx1.version = 1;
+tx1.msg = strToBytes('test');
+tx1.lockHeight = 123;
+
+// get tx id hash
+var hash = hashCompactTx(tx1);
+
+// reverse hash for display (use slice to make copy first)
+console.log('Tx1 Hash:', hex.encode(hash.slice().reverse()));
+
+// sign the transaction
+var sigObj = signTransaction(hash, privKey);
+
+// check the signature is valid
+var valid = checkSignature(hash, sigObj.signature, ck.publicKey);
+console.log('Tx1 sig valid?', valid);
+
+// convert sigObj to 65 byte format
+var sigHex = exportSig(sigObj).toString('hex');
+
+// prepend final byte (number of sigs required to verify)
+tx1.inputs[0].scriptSig = finalizeSig(sigHex, 1);
+
+// uncomment to print signed txn hex
+//var bytes = [];
+//tx1.serializeInto(new ArraySink(bytes));
+//console.log('Tx1 Hex', hex.encode(bytes));
+
+/****** TEST: UNSERIALIZE TX & CHECK SIGNATURE ******/
+
+// Real Cryptonite txn from block #2303879
+var txHex = "01000000018dc94401168c784a8f140af06208e7e03ea18695e81f5853b1b6e00d4201043935a77da0ea2effaed7af2367ff95e968f1802b04984e115f4a14796cc9fe40c24a3112665fdd520e48ee45af8cc4d95b3c2d2024ddf4358e62ff9a74a24db201001c5853b1b6e00d381e43cdfb67c2435583bbbdb483a1f7378c31fc008527230000000000";
+var tx2 = Transaction.parse(new Stream(new ArraySource(hex.decode(txHex))));
+
+// get tx id hash
+var hash2 = hashCompactTx(tx2);
+
+// reverse hash for display (use slice to make copy first)
+console.log('Tx2 Hash', hex.encode(hash2.slice().reverse()));
+
+// get first sig in tx as array of 65 bytes
+var sigBytes = tx2.inputs[0].scriptSig.slice(1, 66);
+// convert byte array into signature object
+var sigObj2 = importSig(sigBytes);
+// recover the public key from the sig
+var pubKey = pubKeyFromSig(hash2, sigObj2);
+// apply hashing to recovered pubkey
+var hash160 = pubKeyToHash160(pubKey.toString('hex'));
+// reverse pubkey hash for display
+console.log('Recovered pubkey hash:', hex.encode(hash160.slice().reverse()));
+
+// ensure recovered pubkey matches the one in the txn
+if (hex.encode(tx2.inputs[0].pubkey) === hex.encode(hash160)) {
+	// check the signature is valid
+	valid = checkSignature(hash2, sigObj2.signature, pubKey);
+	console.log('Tx2 sig valid?', valid);
+} else {
+	valid = false;
+	console.log('Wrong recovered pubkey!');
+}
+</script>
+
+</body>
+</html>
