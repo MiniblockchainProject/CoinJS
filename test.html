@@ -61,20 +61,20 @@ var tx1 = new Transaction();
 
 // create an input for the txn
 tx1.inputs.push({
-    pubkey: hex.decode(input_add),
+	pubkey: hex.decode(input_add),
 	value: 4000001002,
-    scriptSig: []
+	scriptSig: []
 });
 
 // the Cryptonite hack used two large outputs 
 // like this to exploit an overflow bug 
 tx1.outputs.push({
-    value: 49000000000000000,
+	value: 49000000000000000,
 	pubkey: output_add1
 });
 
 tx1.outputs.push({
-    value: 18406744063709551615,
+	value: 18406744063709551615,
 	pubkey: output_add2
 });
 

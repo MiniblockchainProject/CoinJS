@@ -1,6 +1,6 @@
 var coin_versions = {
-  public: 0x1C,
-  private: 0xEF
+	public: 0x1C,
+	private: 0xEF
 }
 
 function randomPrivateKey(format='buffer') {
@@ -44,15 +44,15 @@ function addressToHash160(addr) {
 	return hash.substr(2, hash.length - 10);
 }
 
-function pubKeyToHash160(publicKey, in_format='hex', out_format='bytes') {
-    return RIPEMD160(SHA256(publicKey, in_format), 'words', out_format);
+function pubKeyToHash160(public_key, in_format='hex', out_format='bytes') {
+	return RIPEMD160(SHA256(public_key, in_format), 'words', out_format);
 }
 
-function pubKeyToAddress(publicKey, verByte=coin_versions.public) {
-    var hash = pubKeyToHash160(publicKey);
-	hash.unshift(verByte);
+function pubKeyToAddress(public_key, ver_byte=coin_versions.public) {
+	var hash = pubKeyToHash160(public_key);
+	hash.unshift(ver_byte);
 	
-    var checksum = SHA256x2(hash, 'bytes', 'bytes').slice(0, 4);
+	var checksum = SHA256x2(hash, 'bytes', 'bytes').slice(0, 4);
 
-    return base58.encode(hash.concat(checksum));
+	return base58.encode(hash.concat(checksum));
 }

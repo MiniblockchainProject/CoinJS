@@ -144,40 +144,40 @@ var Base64 = {
 /* Hex encoding / decoding */
 
 var hex = {
-    decode: function(text) {
-        return text.match(/.{2}/g).map(function(byte) {
-            return parseInt(byte, 16);
-        });
-    },
-    encode: function(bytes) {
-        var result = [];
-        for (var i = 0, hex; i < bytes.length; i++) {
-            hex = bytes[i].toString(16);
-            if (hex.length < 2) {
-                hex = '0' + hex;
-            }
-            result.push(hex);
-        }
-        return result.join('');
-    }
+	decode: function(text) {
+		return text.match(/.{2}/g).map(function(byte) {
+			return parseInt(byte, 16);
+		});
+	},
+	encode: function(bytes) {
+		var result = [];
+		for (var i = 0, hex; i < bytes.length; i++) {
+			hex = bytes[i].toString(16);
+			if (hex.length < 2) {
+				hex = '0' + hex;
+			}
+			result.push(hex);
+		}
+		return result.join('');
+	}
 };
 
 /* little endian encoding / decoding */
 
 var littleEndian = {
-    decode: function(bytes) {
-        return bytes.reduce(function(previous, current, index) {
-            return previous + current * Math.pow(256, index);
-        }, 0);
-    },
-    encode: function(number, count) {
-        var rawBytes = [];
-        for (var i = 0; i < count; i++) {
-            rawBytes[i] = number & 0xff;
-            number = Math.floor(number / 256);
-        }
-        return rawBytes;
-    }
+	decode: function(bytes) {
+		return bytes.reduce(function(previous, current, index) {
+			return previous + current * Math.pow(256, index);
+		}, 0);
+	},
+	encode: function(number, count) {
+		var rawBytes = [];
+		for (var i = 0; i < count; i++) {
+			rawBytes[i] = number & 0xff;
+			number = Math.floor(number / 256);
+		}
+		return rawBytes;
+	}
 };
 
 /* byte based encoding / decoding */
@@ -191,30 +191,30 @@ function wordsToBytes(words) {
 }
 
 function numToBytes(num, bytes) {
-  if (bytes === undefined) bytes = 8;
-  if (bytes == 0) return [];
-  else return [num % 256].concat(numToBytes(Math.floor(num / 256), bytes - 1));
+	if (bytes === undefined) bytes = 8;
+	if (bytes == 0) return [];
+	else return [num % 256].concat(numToBytes(Math.floor(num / 256), bytes - 1));
 }
 
 function numToVarInt(num) {
-  if (num < 253) return [num];
-  else if (num < 65536) return [253].concat(numToBytes(num, 2));
-  else if (num < 4294967296) return [254].concat(numToBytes(num, 4));
-  else return [253].concat(numToBytes(num, 8));
+	if (num < 253) return [num];
+	else if (num < 65536) return [253].concat(numToBytes(num, 2));
+	else if (num < 4294967296) return [254].concat(numToBytes(num, 4));
+	else return [253].concat(numToBytes(num, 8));
 }
 
 function bytesToStr(bytes) {
-    var result = '';
-    for(var i = 0, n = bytes.length; i < n;) {
-        result += String.fromCharCode.apply(bytes[i]);
-    }
-    return result;
+	var result = '';
+	for(var i = 0, n = bytes.length; i < n;) {
+		result += String.fromCharCode.apply(bytes[i]);
+	}
+	return result;
 }
 
 function strToBytes(str) {
-    var bytes = [];
-    for(var i = 0, n = str.length; i < n; i++) {
-        bytes.push(str.charCodeAt(i));
-    }
-    return bytes;
+	var bytes = [];
+	for(var i = 0, n = str.length; i < n; i++) {
+		bytes.push(str.charCodeAt(i));
+	}
+	return bytes;
 }
