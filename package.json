@@ -1,0 +1,20 @@
+{
+  "name": "xcncoinjs",
+  "version": "1.0.0",
+  "description": "Cryptonite Javascript library with functionality useful for web wallet apps",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MiniblockchainProject/CoinJS.git"
+  },
+  "keywords": [ "cryptography", "crypto", "bitcoin", "cryptonite", "ecdsa" ],
+  "author": "Miniblockchain Project",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/MiniblockchainProject/CoinJS/issues"
+  },
+  "homepage": "https://github.com/MiniblockchainProject/CoinJS#readme"
+}

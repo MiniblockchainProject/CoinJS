@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-	<meta charset="UTF-8">
-	<title>Test Page</title>
-
-	<script src="./browsified/coinjs.js"></script>
-</head>
-<body>
-<h1>Functionality Tests</h1>
-
-<p>Open console to see results.</p>
-
-<script>
+var CoinJS = require('xcncoinjs');
 var CoinKey = CoinJS.CoinKey;
 var BigInt = CoinJS.BigInt;
 //var Buffer = CoinJS.Buffer;
@@ -122,13 +109,11 @@ console.log('Recovered pubkey hash:', CoinJS.reverseHash(pubHex));
 // ensure recovered pubkey matches the one in the txn
 if (CoinJS.hex_encode(tx2.inputs[0].pubkey) === hash160) {
 	// check the signature is valid
+	// NOTE: this will return false due to an issue (bug?) with
+	// secp256k1.verify(), it is fixed in the browsified bundle
 	valid = CoinJS.checkSignature(hash2, sigObj2.signature, pubKey);
 	console.log('Tx2 sig valid?', valid);
 } else {
 	valid = false;
 	console.log('Wrong recovered pubkey!');
 }
-</script>
-
-</body>
-</html>
