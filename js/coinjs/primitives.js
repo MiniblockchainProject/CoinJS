@@ -84,7 +84,7 @@ Stream.prototype = {
 	},
 	readBigInt: function(num) {
 		var bytes = this.readBytes(num);
-		return Utils.CreateBigInt(hex.encode(bytes), 'hex', 'be');
+		return Utils.CreateBigInt(hex.encode(bytes), 'hex');
 	},
 	readVarInt: function() {
 		var num = this.readByte();

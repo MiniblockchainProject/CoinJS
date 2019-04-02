@@ -7,7 +7,7 @@ function CreateBuffer (arg1) {
   return new Buffer(arg1);
 }
 
-function CreateBigInt (num, base=10, end='le') {
+function CreateBigInt (num, base=10, end='be') {
   return new BigInt(num, base, end);
 }
 
