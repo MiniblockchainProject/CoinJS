@@ -27,7 +27,6 @@ module.exports = {
 	// primitives
 	ArraySource: primitives.ArraySource,
 	ArraySink: primitives.ArraySink,
-	Stream: primitives.Stream,
 	
 	// hashing
 	RIPEMD160: hashing.RIPEMD160,
