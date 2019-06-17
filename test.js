@@ -1,6 +1,6 @@
 var CoinJS = require('xcncoinjs');
 var CoinKey = CoinJS.CoinKey;
-var BigInt = CoinJS.BigInt;
+//var BigInt = CoinJS.BigInt;
 //var Buffer = CoinJS.Buffer;
 //var secp256k1 = CoinJS.secp256k1;
 
@@ -34,22 +34,21 @@ var input_add = ck.publicHash.toString('hex');
 // create the new txn object
 var tx1 = new CoinJS.Transaction();
 
-// create an input for the txn
+// txn fee is difference between input and output totals
+// the fee should be smaller than the amount transfered
 tx1.inputs.push({
 	pubkey: input_add,
-	value: new BigInt('4000001002', 10),
+	value: CoinJS.amountToCoinInt('123.4560000100'),
 	sig: []
 });
 
-// the Cryptonite hack used two large outputs 
-// like this to exploit an overflow bug 
 tx1.outputs.push({
-	value: new BigInt('49000000000000000', 10),
+	value: CoinJS.amountToCoinInt('100.456'),
 	pubkey: output_add1
 });
 
 tx1.outputs.push({
-	value: new BigInt('18406744063709551615', 10),
+	value: CoinJS.amountToCoinInt('23'),
 	pubkey: output_add2
 });
 

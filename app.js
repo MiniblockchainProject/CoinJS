@@ -48,6 +48,7 @@ module.exports = {
 	pubKeyFromSig: txUtils.pubKeyFromSig,
 	signTransaction: txUtils.signTransaction,
 	checkSignature: txUtils.checkSignature,
+	amountToCoinInt: txUtils.amountToCoinInt,
 	
 	// key utilities
 	genNewPrivateKey: keyUtils.genNewPrivateKey,
