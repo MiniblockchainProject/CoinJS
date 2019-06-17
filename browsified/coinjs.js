@@ -24682,7 +24682,7 @@ exports.verify = function (message, signature, publicKey) {
   var sigs = new BN(sigObj.s)
   if (sigr.cmp(ecparams.n) >= 0 || sigs.cmp(ecparams.n) >= 0) throw new Error(messages.ECDSA_SIGNATURE_PARSE_FAIL)
   if (/*sigs.cmp(ec.nh) === 1 ||*/ sigr.isZero() || sigs.isZero()) return false
-  //TODO: find out why this check fails on recovered sigs
+
   var pair = loadPublicKey(publicKey)
   if (pair === null) throw new Error(messages.EC_PUBLIC_KEY_PARSE_FAIL)
 
@@ -25379,7 +25379,6 @@ module.exports = {
 	// primitives
 	ArraySource: primitives.ArraySource,
 	ArraySink: primitives.ArraySink,
-	Stream: primitives.Stream,
 	
 	// hashing
 	RIPEMD160: hashing.RIPEMD160,
@@ -25401,6 +25400,7 @@ module.exports = {
 	pubKeyFromSig: txUtils.pubKeyFromSig,
 	signTransaction: txUtils.signTransaction,
 	checkSignature: txUtils.checkSignature,
+	amountToCoinInt: txUtils.amountToCoinInt,
 	
 	// key utilities
 	genNewPrivateKey: keyUtils.genNewPrivateKey,
@@ -25983,6 +25983,7 @@ module.exports = {
 },{"./primitives.js":281}],283:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer;
 var secp256k1 = require('secp256k1');
+var BigInt = require('bn.js');
 var encoders = require('./encoders.js');
 var hashing = require('./hashing.js');
 var primitives = require('./primitives.js');
@@ -26085,6 +26086,27 @@ function checkSignature(hash, sig, pubKey) {
 	}
 }
 
+function amountToCoinInt(amountStr, decPlaces=10) {
+
+	if (isNaN(amountStr)) {
+		return false;
+	} else {
+		var pad = '0'.repeat(decPlaces);
+		if (amountStr.match(/^\d+$/)){
+			return new BigInt(amountStr+pad, 10);
+		} else if (amountStr.match(/^\d+\.\d+$/)) {
+			var frac = amountStr.substring(amountStr.indexOf('.')+1);
+			pad = pad.substring(0, decPlaces-Math.min(decPlaces, frac.length));
+			return new BigInt((amountStr.replace('.', '')+pad).replace(/^0+/, ''), 10);
+		} else if (amountStr.charAt(0) == '.') {
+			pad = pad.substring(0, decPlaces-Math.min(decPlaces, amountStr.length-1));
+			return new BigInt((amountStr.substring(1)+pad).replace(/^0+/, ''), 10);
+		} else {
+			return false;
+		}
+	}
+}
+
 module.exports = {
 	compactTx: compactTx,
 	hashCompactTx: hashCompactTx,
@@ -26094,9 +26116,10 @@ module.exports = {
 	exportSig: exportSig,
 	pubKeyFromSig: pubKeyFromSig,
 	signTransaction: signTransaction,
-	checkSignature: checkSignature
+	checkSignature: checkSignature,
+	amountToCoinInt: amountToCoinInt
 };
-},{"./encoders.js":278,"./hashing.js":279,"./primitives.js":281,"./tx_parse.js":282,"safe-buffer":286,"secp256k1":221}],284:[function(require,module,exports){
+},{"./encoders.js":278,"./hashing.js":279,"./primitives.js":281,"./tx_parse.js":282,"bn.js":1,"safe-buffer":286,"secp256k1":221}],284:[function(require,module,exports){
 // base-x encoding / decoding
 // Copyright (c) 2018 base-x contributors
 // Copyright (c) 2014-2018 The Bitcoin Core developers (base58.cpp)
