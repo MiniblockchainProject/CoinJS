@@ -1,6 +1,6 @@
 {
   "name": "xcncoinjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cryptonite Javascript library with functionality useful for web wallet apps",
   "main": "app.js",
   "directories": {
@@ -16,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/MiniblockchainProject/CoinJS/issues"
   },
-  "homepage": "https://github.com/MiniblockchainProject/CoinJS#readme"
+  "homepage": "https://github.com/MiniblockchainProject/CoinJS#readme",
+  "dependencies": {
+    "bs58": "^2.0.1",
+	"create-hash": "^1.2.0",
+	"secure-random": "^1.1.1",
+	"safe-buffer": "^5.1.2",
+	"secp256k1": "^3.6.2",
+	"coinkey": "^3.0.0",
+	"bn.js": "^4.11.8"
+  }
 }
