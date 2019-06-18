@@ -1,6 +1,6 @@
 {
   "name": "xcncoinjs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Cryptonite Javascript library with functionality useful for web wallet apps",
   "main": "app.js",
   "directories": {
